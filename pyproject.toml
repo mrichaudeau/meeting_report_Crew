@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "meeting-summary-crew"
+version = "0.1.0"
+description = "This a Automated AI Crew which generates reports from Google Meetings"
+authors = ["Maxime RICHAUDEAU <mrichaudeau@polarysgroup.com>"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
