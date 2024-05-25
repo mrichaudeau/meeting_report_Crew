@@ -1,72 +1,59 @@
 import os
 from crewai import Agent, Task, Crew, Process
 from langchain_openai import ChatOpenAI
-from decouple import config
+from dotenv import load_dotenv
 
 from textwrap import dedent
 from agents import CustomAgents
 from tasks import CustomTasks
 
-# Install duckduckgo-search for this example:
-# !pip install -U duckduckgo-search
+load_dotenv()
 
-from langchain.tools import DuckDuckGoSearchRun
+tasks = CustomTasks()
+agents = CustomAgents()
 
-search_tool = DuckDuckGoSearchRun()
+print("## Welcome to the Meeting Report Crew")
+print("-------------------------------")
+meeting_context = input("What is the context of the meeting?\n")
+meeting_objective = input("What is your objective for this meeting?\n")
 
-os.environ["OPENAI_API_KEY"] = config("OPENAI_API_KEY")
-os.environ["OPENAI_ORGANIZATION"] = config("OPENAI_ORGANIZATION_ID")
+# Create Agents
+report_structurer_agent = agents.report_structurer_agent()
+meeting_notes_analyst_agent = agents.meeting_notes_analyst()
+report_writer_agent = agents.report_writer_agent()
+report_qa_agent = agents.report_qa_agent()
 
-# This is the main class that you will use to define your custom crew.
-# You can define as many agents and tasks as you want in agents.py and tasks.py
+# Create Tasks
+create_report_structure = tasks.meeting_notes_analyst_task(
+    report_structurer_agent, meeting_context, meeting_objective
+)
+analyse_notes = tasks.meeting_notes_analyst(
+    meeting_notes_analyst_agent, meeting_context, meeting_objective
+)
+write_report = tasks.report_writer_task(report_writer_agent)
+final_report_qa = tasks.report_qa_task(report_qa_agent)
 
-
-class CustomCrew:
-    def __init__(self, var1, var2):
-        self.var1 = var1
-        self.var2 = var2
-
-    def run(self):
-        # Define your custom agents and tasks in agents.py and tasks.py
-        agents = CustomAgents()
-        tasks = CustomTasks()
-
-        # Define your custom agents and tasks here
-        custom_agent_1 = agents.agent_1_name()
-        custom_agent_2 = agents.agent_2_name()
-
-        # Custom tasks include agent name and variables as input
-        custom_task_1 = tasks.task_1_name(
-            custom_agent_1,
-            self.var1,
-            self.var2,
-        )
-
-        custom_task_2 = tasks.task_2_name(
-            custom_agent_2,
-        )
-
-        # Define your custom crew here
-        crew = Crew(
-            agents=[custom_agent_1, custom_agent_2],
-            tasks=[custom_task_1, custom_task_2],
-            verbose=True,
-        )
-
-        result = crew.kickoff()
-        return result
+analyse_notes.context = [create_report_structure]
+write_report.context = [create_report_structure, analyse_notes]
+final_report_qa.context = [write_report]
 
 
-# This is the main function that you will use to run your custom crew.
-if __name__ == "__main__":
-    print("## Welcome to Crew AI Template")
-    print("-------------------------------")
-    var1 = input(dedent("""Enter variable 1: """))
-    var2 = input(dedent("""Enter variable 2: """))
+# Create Crew responsible for Copy
+crew = Crew(
+    agents=[
+        report_structurer_agent,
+        meeting_notes_analyst_agent,
+        report_writer_agent,
+        report_qa_agent,
+    ],
+    tasks=[create_report_structure, analyse_notes, write_report, final_report_qa],
+)
 
-    custom_crew = CustomCrew(var1, var2)
-    result = custom_crew.run()
-    print("\n\n########################")
-    print("## Here is you custom crew run result:")
-    print("########################\n")
-    print(result)
+report_generation = crew.kickoff()
+
+
+# Print results
+print("\n\n################################################")
+print("## Here is the result")
+print("################################################\n")
+print(report_generation)

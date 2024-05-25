@@ -1,0 +1,37 @@
+Préparation Réunion Jeremy 
+
+Qu'est ce que tu attends de moi sur ce stage ?
+
+Problématique : 
+Problème d'IA gen à craquer. 
+--> générer une grosse table à partir de l'ensemble des textes et tableaux de données extraits des documents brevets etc ...
+
+
+Engagement Client
+NDA. Etre très discret! Ne pas en parler avec les proches ! SERVIER !
+Sys d'ia gen qui doit s'adapter !
+
+Durée mission
+4 semaines en renfort de la team sur la partie ia gen sur les tableaux à concat vs merge ! 
+
+
+SetUP :
+Tout sur google drive ! Docs + excel !
+Compte GitHub + Repo !
+
+
+Attention particulière sur l'utilisation de ChatGPT
+Donnée perso attention ! 
+
+
+
+Mission :
+
+Framework à apprendre
+langue-chain : multi agent
+
+llama index
+
+creaw.ai
+
+pour créer des app AI intellogente avec ça 
